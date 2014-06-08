@@ -1380,7 +1380,7 @@ func hashCoords6(x,y,z,w,u,v int32, seed uint32) uint32 {
     return xorFoldHash(fnv32ABuf(d))
 } */
 
-func hashCoords(seed uint32, coords []int32) byte {
+func hashCoords(seed uint32, coords ...int32) byte {
 	d := make([]uint32, len(coords)+1)
 	for i, _ := range coords {
 		d[i] = uint32(coords[i])
@@ -1389,10 +1389,6 @@ func hashCoords(seed uint32, coords []int32) byte {
 	d[len(coords)] = seed
 
 	return xorFoldHash(fnv32ABuf(d))
-}
-
-func hashCoordsVar(seed uint32, coords ...int32) byte {
-	return hashCoords(seed, coords)
 }
 
 func computeHashFloat64(seed uint32, coords ...float64) byte {
@@ -1434,7 +1430,7 @@ type workerNoise4 func(float64, float64, float64, float64, int32, int32, int32, 
 type workerNoise6 func(float64, float64, float64, float64, float64, float64, int32, int32, int32, int32, int32, int32, uint32) float64
 
 func valueNoise(seed uint32, icoords ...int32) float64 {
-	n := hashCoords(seed, icoords)
+	n := hashCoords(seed, icoords...)
 	noise := float64(n) / 255.0
 	return noise*2.0 - 1.0
 }
@@ -1456,7 +1452,7 @@ func valueNoise6(x, y, z, w, u, v float64, ix, iy, iz, iw, iu, iv int32, seed ui
 }
 
 func gradNoise2(x, y float64, ix, iy int32, seed uint32) float64 {
-	hash := hashCoordsVar(seed, ix, iy)
+	hash := hashCoords(seed, ix, iy)
 	vec := GRADIENT_2D_LUT[hash]
 
 	dx := x - float64(ix)
@@ -1466,7 +1462,7 @@ func gradNoise2(x, y float64, ix, iy int32, seed uint32) float64 {
 }
 
 func gradNoise3(x, y, z float64, ix, iy, iz int32, seed uint32) float64 {
-	hash := hashCoordsVar(seed, ix, iy, iz)
+	hash := hashCoords(seed, ix, iy, iz)
 	vec := GRADIENT_3D_LUT[hash]
 
 	dx := x - float64(ix)
@@ -1477,7 +1473,7 @@ func gradNoise3(x, y, z float64, ix, iy, iz int32, seed uint32) float64 {
 }
 
 func gradNoise4(x, y, z, w float64, ix, iy, iz, iw int32, seed uint32) float64 {
-	hash := hashCoordsVar(seed, ix, iy, iz, iw)
+	hash := hashCoords(seed, ix, iy, iz, iw)
 	vec := GRADIENT_4D_LUT[hash]
 
 	dx := x - float64(ix)
@@ -1489,7 +1485,7 @@ func gradNoise4(x, y, z, w float64, ix, iy, iz, iw int32, seed uint32) float64 {
 }
 
 func gradNoise6(x, y, z, w, u, v float64, ix, iy, iz, iw, iu, iv int32, seed uint32) float64 {
-	hash := hashCoordsVar(seed, ix, iy, iz, iw, iu, iv)
+	hash := hashCoords(seed, ix, iy, iz, iw, iu, iv)
 	vec := GRADIENT_6D_LUT[hash]
 
 	dx := x - float64(ix)
@@ -1975,9 +1971,9 @@ func SimplexNoise2D(x, y float64, seed uint32, interp InterpFunc) float64 {
 	y2 := y0 - 1.0 + 2.0*G2
 
 	// Hash the triangle coordinates to index the gradient table
-	h0 := hashCoordsVar(seed, i, j)
-	h1 := hashCoordsVar(seed, i+i1, j+j1)
-	h2 := hashCoordsVar(seed, i+1, j+1)
+	h0 := hashCoords(seed, i, j)
+	h1 := hashCoords(seed, i+i1, j+j1)
+	h2 := hashCoords(seed, i+1, j+1)
 
 	// Now, index the tables
 	g0 := GRADIENT_2D_LUT[h0]
@@ -2094,10 +2090,10 @@ func SimplexNoise3D(x, y, z float64, seed uint32, interp InterpFunc) float64 {
 	y3 := y0 - 1.0 + 3.0*G3
 	z3 := z0 - 1.0 + 3.0*G3
 
-	h0 := hashCoordsVar(seed, i, j, k)
-	h1 := hashCoordsVar(seed, i+i1, j+j1, k+k1)
-	h2 := hashCoordsVar(seed, i+i2, j+j2, k+k2)
-	h3 := hashCoordsVar(seed, i+1, j+1, k+1)
+	h0 := hashCoords(seed, i, j, k)
+	h1 := hashCoords(seed, i+i1, j+j1, k+k1)
+	h2 := hashCoords(seed, i+i2, j+j2, k+k2)
+	h3 := hashCoords(seed, i+1, j+1, k+1)
 
 	g0 := GRADIENT_3D_LUT[h0]
 	g1 := GRADIENT_3D_LUT[h1]
@@ -2223,11 +2219,11 @@ func SimplexNoise4D(x, y, z, w float64, seed uint32, interp InterpFunc) float64 
 	z4 := z0 - 1.0 + 4.0*G4
 	w4 := w0 - 1.0 + 4.0*G4
 	// Work out the hashed gradient indices of the five simplex corners
-	h0 := hashCoordsVar(seed, i, j, k, l)
-	h1 := hashCoordsVar(seed, i+i1, j+j1, k+k1, l+l1)
-	h2 := hashCoordsVar(seed, i+i2, j+j2, k+k2, l+l2)
-	h3 := hashCoordsVar(seed, i+i3, j+j3, k+k3, l+l3)
-	h4 := hashCoordsVar(seed, i+1, j+1, k+1, l+1)
+	h0 := hashCoords(seed, i, j, k, l)
+	h1 := hashCoords(seed, i+i1, j+j1, k+k1, l+l1)
+	h2 := hashCoords(seed, i+i2, j+j2, k+k2, l+l2)
+	h3 := hashCoords(seed, i+i3, j+j3, k+k3, l+l3)
+	h4 := hashCoords(seed, i+1, j+1, k+1, l+1)
 
 	g0 := GRADIENT_4D_LUT[h0]
 	g1 := GRADIENT_4D_LUT[h1]
@@ -2376,7 +2372,7 @@ func NewSimplexNoise4D(x, y, z, w float64, seed uint32, interp InterpFunc) float
 		}
 
 		if t > 0.0 {
-			h := hashCoordsVar(seed, intLoc[0], intLoc[1], intLoc[2], intLoc[3])
+			h := hashCoords(seed, intLoc[0], intLoc[1], intLoc[2], intLoc[3])
 			vec := GRADIENT_4D_LUT[h]
 			gr := 0.
 			for d := 0; d < 4; d++ {
@@ -2452,7 +2448,7 @@ func SimplexNoise6D(x, y, z, w, u, v float64, seed uint32, interp InterpFunc) fl
 		}
 
 		if t > 0.0 {
-			h := hashCoordsVar(seed, intLoc[0], intLoc[1], intLoc[2], intLoc[3], intLoc[4], intLoc[5])
+			h := hashCoords(seed, intLoc[0], intLoc[1], intLoc[2], intLoc[3], intLoc[4], intLoc[5])
 			vec := GRADIENT_6D_LUT[h]
 			gr := 0.
 			for d := 0; d < 6; d++ {
