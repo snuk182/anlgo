@@ -11,6 +11,8 @@ func (this *ImplicitSelect) Spacing() float64 {
 	return this.ImplicitModuleBase.spacing
 }
 
+func (this *ImplicitSelect) SetSeed(seed uint32){}
+
 func (this *ImplicitSelect) SetLowSourceModule(b ImplicitModule) {
 	this.low.SetModule(b)
 }
