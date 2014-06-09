@@ -17,10 +17,10 @@ const (
 
 type ImplicitFractal struct {
 	ImplicitModuleBase
-	basis                                  []ImplicitBasisFunction
-	source                                 []ImplicitModule
-	exparray                               []float64
-	correct                                [][2]float64
+	basis                                  [MaxSources]ImplicitBasisFunction
+	source                                 [MaxSources]ImplicitModule
+	exparray                               [MaxSources]float64
+	correct                                [MaxSources][2]float64
 	offset, gain, H, frequency, lacunarity float64
 	numoctaves                             uint32
 	ftype                                  FractalType
@@ -60,6 +60,7 @@ func NewImplicitFractal(ftype FractalType, basistype BasisType, interptype Inter
 		lacunarity: 2.,
 		ftype:      ftype,
 	}
+	
 	v.SetAllSourceTypes(basistype, interptype);
 	v.ResetAllSources();
 	
