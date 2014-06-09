@@ -53,15 +53,17 @@ func (self *ImplicitFractal) SetH(h float64) {
 	self.H = h
 }
 
-func NewImplicitFractal(ftype, basistype, interptype FractalType) *ImplicitFractal {
-	return &ImplicitFractal{
+func NewImplicitFractal(ftype FractalType, basistype BasisType, interptype InterpType) *ImplicitFractal {
+	v := &ImplicitFractal{
 		numoctaves: 8,
 		frequency:  1.,
 		lacunarity: 2.,
 		ftype:      ftype,
 	}
-	//!!setAllSourceTypes(basistype, interptype);
-	//!!resetAllSources();
+	v.SetAllSourceTypes(basistype, interptype);
+	v.ResetAllSources();
+	
+	return v
 }
 
 func (self *ImplicitFractal) SetType(t FractalType) {
