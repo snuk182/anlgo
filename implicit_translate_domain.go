@@ -9,6 +9,8 @@ func (this *ImplicitTranslateDomain) Spacing() float64 {
 	return this.ImplicitModuleBase.spacing
 }
 
+func (this *ImplicitTranslateDomain) SetSeed(seed uint32){}
+
 func (this *ImplicitTranslateDomain) SetXAxisSourceModule(m ImplicitModule) {
 	this.ax.SetModule(m)
 }
