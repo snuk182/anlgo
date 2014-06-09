@@ -1335,19 +1335,6 @@ func QuinticInterp(t float64) float64 {
 	return t * t * t * (t*(t*6-15) + 10)
 }
 
-func fastFloor(t float64) int32 {
-	return (map[bool]int32{true: int32(t), false: int32(t) - 1})[t > 0]
-}
-
-func arrayDot(arr []float64, values ...float64) float64 {
-	output := float64(0.)
-	for i,v := range values {
-		output += v*arr[i]
-	}
-	
-	return output;
-}
-
 func fnv32ABuf(buf []uint32) uint32 {
 	hval := FNV_32_INIT
 
@@ -1503,106 +1490,101 @@ func gradNoise6(x, y, z, w, u, v float64, ix, iy, iz, iw, iu, iv int32, seed uin
 	return dx*vec[0] + dy*vec[1] + dz*vec[2] + dw*vec[3] + du*vec[4] + dv*vec[5]
 }
 
-// Edge/Face/Cube/Hypercube interpolation
-func lerp(s, v1, v2 float64) float64 {
-	return v1 + s*(v2-v1)
-}
-
 func interpX2(x, y, xs float64, x0, x1, iy int32, seed uint32, noisefunc workerNoise2) float64 {
 	v1 := noisefunc(x, y, x0, iy, seed)
 	v2 := noisefunc(x, y, x1, iy, seed)
-	return lerp(xs, v1, v2)
+	return Lerp(xs, v1, v2)
 }
 
 func interpXY2(x, y, xs, ys float64, x0, x1, y0, y1 int32, seed uint32, noisefunc workerNoise2) float64 {
 	v1 := interpX2(x, y, xs, x0, x1, y0, seed, noisefunc)
 	v2 := interpX2(x, y, xs, x0, x1, y1, seed, noisefunc)
-	return lerp(ys, v1, v2)
+	return Lerp(ys, v1, v2)
 }
 
 func interpX3(x, y, z, xs float64, x0, x1, iy, iz int32, seed uint32, noisefunc workerNoise3) float64 {
 	v1 := noisefunc(x, y, z, x0, iy, iz, seed)
 	v2 := noisefunc(x, y, z, x1, iy, iz, seed)
-	return lerp(xs, v1, v2)
+	return Lerp(xs, v1, v2)
 }
 
 func interpXY3(x, y, z, xs, ys float64, x0, x1, y0, y1, iz int32, seed uint32, noisefunc workerNoise3) float64 {
 	v1 := interpX3(x, y, z, xs, x0, x1, y0, iz, seed, noisefunc)
 	v2 := interpX3(x, y, z, xs, x0, x1, y1, iz, seed, noisefunc)
-	return lerp(ys, v1, v2)
+	return Lerp(ys, v1, v2)
 }
 
 func interpXYZ3(x, y, z, xs, ys, zs float64, x0, x1, y0, y1, z0, z1 int32, seed uint32, noisefunc workerNoise3) float64 {
 	v1 := interpXY3(x, y, z, xs, ys, x0, x1, y0, y1, z0, seed, noisefunc)
 	v2 := interpXY3(x, y, z, xs, ys, x0, x1, y0, y1, z1, seed, noisefunc)
-	return lerp(zs, v1, v2)
+	return Lerp(zs, v1, v2)
 }
 
 func interpX4(x, y, z, w, xs float64, x0, x1, iy, iz, iw int32, seed uint32, noisefunc workerNoise4) float64 {
 	v1 := noisefunc(x, y, z, w, x0, iy, iz, iw, seed)
 	v2 := noisefunc(x, y, z, w, x1, iy, iz, iw, seed)
-	return lerp(xs, v1, v2)
+	return Lerp(xs, v1, v2)
 }
 
 func interpXY4(x, y, z, w, xs, ys float64, x0, x1, y0, y1, iz, iw int32, seed uint32, noisefunc workerNoise4) float64 {
 	v1 := interpX4(x, y, z, w, xs, x0, x1, y0, iz, iw, seed, noisefunc)
 	v2 := interpX4(x, y, z, w, xs, x0, x1, y1, iz, iw, seed, noisefunc)
-	return lerp(ys, v1, v2)
+	return Lerp(ys, v1, v2)
 }
 
 func interpXYZ4(x, y, z, w, xs, ys, zs float64, x0, x1, y0, y1, z0, z1, iw int32, seed uint32, noisefunc workerNoise4) float64 {
 	v1 := interpXY4(x, y, z, w, xs, ys, x0, x1, y0, y1, z0, iw, seed, noisefunc)
 	v2 := interpXY4(x, y, z, w, xs, ys, x0, x1, y0, y1, z1, iw, seed, noisefunc)
-	return lerp(zs, v1, v2)
+	return Lerp(zs, v1, v2)
 }
 
 func interpXYZW4(x, y, z, w, xs, ys, zs, ws float64, x0, x1, y0, y1, z0, z1, w0, w1 int32, seed uint32, noisefunc workerNoise4) float64 {
 	v1 := interpXYZ4(x, y, z, w, xs, ys, zs, x0, x1, y0, y1, z0, z1, w0, seed, noisefunc)
 	v2 := interpXYZ4(x, y, z, w, xs, ys, zs, x0, x1, y0, y1, z0, z1, w1, seed, noisefunc)
-	return lerp(ws, v1, v2)
+	return Lerp(ws, v1, v2)
 }
 
 func interpX6(x, y, z, w, u, v, xs float64, x0, x1, iy, iz, iw, iu, iv int32, seed uint32, noisefunc workerNoise6) float64 {
 	v1 := noisefunc(x, y, z, w, u, v, x0, iy, iz, iw, iu, iv, seed)
 	v2 := noisefunc(x, y, z, w, u, v, x1, iy, iz, iw, iu, iv, seed)
-	return lerp(xs, v1, v2)
+	return Lerp(xs, v1, v2)
 }
 
 func interpXY6(x, y, z, w, u, v, xs, ys float64, x0, x1, y0, y1, iz, iw, iu, iv int32, seed uint32, noisefunc workerNoise6) float64 {
 	v1 := interpX6(x, y, z, w, u, v, xs, x0, x1, y0, iz, iw, iu, iv, seed, noisefunc)
 	v2 := interpX6(x, y, z, w, u, v, xs, x0, x1, y1, iz, iw, iu, iv, seed, noisefunc)
-	return lerp(ys, v1, v2)
+	return Lerp(ys, v1, v2)
 }
 
 func interpXYZ6(x, y, z, w, u, v, xs, ys, zs float64, x0, x1, y0, y1, z0, z1, iw, iu, iv int32, seed uint32, noisefunc workerNoise6) float64 {
 	v1 := interpXY6(x, y, z, w, u, v, xs, ys, x0, x1, y0, y1, z0, iw, iu, iv, seed, noisefunc)
 	v2 := interpXY6(x, y, z, w, u, v, xs, ys, x0, x1, y0, y1, z1, iw, iu, iv, seed, noisefunc)
-	return lerp(zs, v1, v2)
+	return Lerp(zs, v1, v2)
 }
 
 func interpXYZW6(x, y, z, w, u, v, xs, ys, zs, ws float64, x0, x1, y0, y1, z0, z1, w0, w1, iu, iv int32, seed uint32, noisefunc workerNoise6) float64 {
 	v1 := interpXYZ6(x, y, z, w, u, v, xs, ys, zs, x0, x1, y0, y1, z0, z1, w0, iu, iv, seed, noisefunc)
 	v2 := interpXYZ6(x, y, z, w, u, v, xs, ys, zs, x0, x1, y0, y1, z0, z1, w1, iu, iv, seed, noisefunc)
-	return lerp(ws, v1, v2)
+	return Lerp(ws, v1, v2)
 }
 
 func interpXYZWU6(x, y, z, w, u, v, xs, ys, zs, ws, us float64, x0, x1, y0, y1, z0, z1, w0, w1, u0, u1, iv int32, seed uint32, noisefunc workerNoise6) float64 {
 	v1 := interpXYZW6(x, y, z, w, u, v, xs, ys, zs, ws, x0, x1, y0, y1, z0, z1, w0, w1, u0, iv, seed, noisefunc)
 	v2 := interpXYZW6(x, y, z, w, u, v, xs, ys, zs, ws, x0, x1, y0, y1, z0, z1, w0, w1, u1, iv, seed, noisefunc)
-	return lerp(us, v1, v2)
+	return Lerp(us, v1, v2)
 }
 
 func interpXYZWUV6(x, y, z, w, u, v, xs, ys, zs, ws, us, vs float64, x0, x1, y0, y1, z0, z1, w0, w1, u0, u1, v0, v1 int32, seed uint32, noisefunc workerNoise6) float64 {
 	val1 := interpXYZWU6(x, y, z, w, u, v, xs, ys, zs, ws, us, x0, x1, y0, y1, z0, z1, w0, w1, u0, u1, v0, seed, noisefunc)
 	val2 := interpXYZWU6(x, y, z, w, u, v, xs, ys, zs, ws, us, x0, x1, y0, y1, z0, z1, w0, w1, u0, u1, v1, seed, noisefunc)
-	return lerp(vs, val1, val2)
+	return Lerp(vs, val1, val2)
 }
 
 // The usable noise functions
 
 func ValueNoise2D(x, y float64, seed uint32, interp InterpFunc) float64 {
-	x0 := fastFloor(x)
-	y0 := fastFloor(y)
+	x0 := FastFloor(x)
+	y0 := FastFloor(y)
 
 	x1 := x0 + 1
 	y1 := y0 + 1
@@ -1614,9 +1596,9 @@ func ValueNoise2D(x, y float64, seed uint32, interp InterpFunc) float64 {
 }
 
 func ValueNoise3D(x, y, z float64, seed uint32, interp InterpFunc) float64 {
-	x0 := fastFloor(x)
-	y0 := fastFloor(y)
-	z0 := fastFloor(z)
+	x0 := FastFloor(x)
+	y0 := FastFloor(y)
+	z0 := FastFloor(z)
 	x1 := x0 + 1
 	y1 := y0 + 1
 	z1 := z0 + 1
@@ -1629,10 +1611,10 @@ func ValueNoise3D(x, y, z float64, seed uint32, interp InterpFunc) float64 {
 }
 
 func ValueNoise4D(x, y, z, w float64, seed uint32, interp InterpFunc) float64 {
-	x0 := fastFloor(x)
-	y0 := fastFloor(y)
-	z0 := fastFloor(z)
-	w0 := fastFloor(w)
+	x0 := FastFloor(x)
+	y0 := FastFloor(y)
+	z0 := FastFloor(z)
+	w0 := FastFloor(w)
 
 	x1 := x0 + 1
 	y1 := y0 + 1
@@ -1648,12 +1630,12 @@ func ValueNoise4D(x, y, z, w float64, seed uint32, interp InterpFunc) float64 {
 }
 
 func ValueNoise6D(x, y, z, w, u, v float64, seed uint32, interp InterpFunc) float64 {
-	x0 := fastFloor(x)
-	y0 := fastFloor(y)
-	z0 := fastFloor(z)
-	w0 := fastFloor(w)
-	u0 := fastFloor(u)
-	v0 := fastFloor(v)
+	x0 := FastFloor(x)
+	y0 := FastFloor(y)
+	z0 := FastFloor(z)
+	w0 := FastFloor(w)
+	u0 := FastFloor(u)
+	v0 := FastFloor(v)
 
 	x1 := x0 + 1
 	y1 := y0 + 1
@@ -1673,8 +1655,8 @@ func ValueNoise6D(x, y, z, w, u, v float64, seed uint32, interp InterpFunc) floa
 }
 
 func GradientNoise2D(x, y float64, seed uint32, interp InterpFunc) float64 {
-	x0 := fastFloor(x)
-	y0 := fastFloor(y)
+	x0 := FastFloor(x)
+	y0 := FastFloor(y)
 
 	x1 := x0 + 1
 	y1 := y0 + 1
@@ -1686,9 +1668,9 @@ func GradientNoise2D(x, y float64, seed uint32, interp InterpFunc) float64 {
 }
 
 func GradientNoise3D(x, y, z float64, seed uint32, interp InterpFunc) float64 {
-	x0 := fastFloor(x)
-	y0 := fastFloor(y)
-	z0 := fastFloor(z)
+	x0 := FastFloor(x)
+	y0 := FastFloor(y)
+	z0 := FastFloor(z)
 
 	x1 := x0 + 1
 	y1 := y0 + 1
@@ -1702,10 +1684,10 @@ func GradientNoise3D(x, y, z float64, seed uint32, interp InterpFunc) float64 {
 }
 
 func GradientNoise4D(x, y, z, w float64, seed uint32, interp InterpFunc) float64 {
-	x0 := fastFloor(x)
-	y0 := fastFloor(y)
-	z0 := fastFloor(z)
-	w0 := fastFloor(w)
+	x0 := FastFloor(x)
+	y0 := FastFloor(y)
+	z0 := FastFloor(z)
+	w0 := FastFloor(w)
 
 	x1 := x0 + 1
 	y1 := y0 + 1
@@ -1721,12 +1703,12 @@ func GradientNoise4D(x, y, z, w float64, seed uint32, interp InterpFunc) float64
 }
 
 func GradientNoise6D(x, y, z, w, u, v float64, seed uint32, interp InterpFunc) float64 {
-	x0 := fastFloor(x)
-	y0 := fastFloor(y)
-	z0 := fastFloor(z)
-	w0 := fastFloor(w)
-	u0 := fastFloor(u)
-	v0 := fastFloor(v)
+	x0 := FastFloor(x)
+	y0 := FastFloor(y)
+	z0 := FastFloor(z)
+	w0 := FastFloor(w)
+	u0 := FastFloor(u)
+	v0 := FastFloor(v)
 
 	x1 := x0 + 1
 	y1 := y0 + 1
@@ -1805,8 +1787,8 @@ func addDist(f, disp []float64, testdist, testdisp float64) {
 // Cellular functions. Compute distance (for cellular modules) and displacement (for voronoi modules)
 
 func CellularFunction2D(x, y float64, seed uint32, f, disp []float64) {
-	xint := fastFloor(x)
-	yint := fastFloor(y)
+	xint := FastFloor(x)
+	yint := FastFloor(y)
 
 	for c := 0; c < 4; c++ {
 		f[c] = 99999.0
@@ -1820,8 +1802,8 @@ func CellularFunction2D(x, y float64, seed uint32, f, disp []float64) {
 			xdist := xpos - x
 			ydist := ypos - y
 			dist := (xdist*xdist + ydist*ydist)
-			xval := fastFloor(xpos)
-			yval := fastFloor(ypos)
+			xval := FastFloor(xpos)
+			yval := FastFloor(ypos)
 			dsp := valueNoise2(x, y, xval, yval, seed+3)
 			addDist(f, disp, dist, dsp)
 		}
@@ -1829,9 +1811,9 @@ func CellularFunction2D(x, y float64, seed uint32, f, disp []float64) {
 }
 
 func CellularFunction3D(x, y, z float64, seed uint32, f, disp []float64) {
-	xint := fastFloor(x)
-	yint := fastFloor(y)
-	zint := fastFloor(z)
+	xint := FastFloor(x)
+	yint := FastFloor(y)
+	zint := FastFloor(z)
 
 	for c := 0; c < 4; c++ {
 		f[c] = 99999.0
@@ -1848,9 +1830,9 @@ func CellularFunction3D(x, y, z float64, seed uint32, f, disp []float64) {
 				ydist := ypos - y
 				zdist := zpos - z
 				dist := (xdist*xdist + ydist*ydist + zdist*zdist)
-				xval := fastFloor(xpos)
-				yval := fastFloor(ypos)
-				zval := fastFloor(zpos)
+				xval := FastFloor(xpos)
+				yval := FastFloor(ypos)
+				zval := FastFloor(zpos)
 				dsp := valueNoise3(x, y, z, xval, yval, zval, seed+3)
 				addDist(f, disp, dist, dsp)
 			}
@@ -1859,10 +1841,10 @@ func CellularFunction3D(x, y, z float64, seed uint32, f, disp []float64) {
 }
 
 func CellularFunction4D(x, y, z, w float64, seed uint32, f, disp []float64) {
-	xint := fastFloor(x)
-	yint := fastFloor(y)
-	zint := fastFloor(z)
-	wint := fastFloor(w)
+	xint := FastFloor(x)
+	yint := FastFloor(y)
+	zint := FastFloor(z)
+	wint := FastFloor(w)
 
 	for c := 0; c < 4; c++ {
 		f[c] = 99999.0
@@ -1882,10 +1864,10 @@ func CellularFunction4D(x, y, z, w float64, seed uint32, f, disp []float64) {
 					zdist := zpos - z
 					wdist := wpos - w
 					dist := (xdist*xdist + ydist*ydist + zdist*zdist + wdist*wdist)
-					xval := fastFloor(xpos)
-					yval := fastFloor(ypos)
-					zval := fastFloor(zpos)
-					wval := fastFloor(wpos)
+					xval := FastFloor(xpos)
+					yval := FastFloor(ypos)
+					zval := FastFloor(zpos)
+					wval := FastFloor(wpos)
 					dsp := valueNoise4(x, y, z, w, xval, yval, zval, wval, seed+3)
 					addDist(f, disp, dist, dsp)
 				}
@@ -1895,12 +1877,12 @@ func CellularFunction4D(x, y, z, w float64, seed uint32, f, disp []float64) {
 }
 
 func CellularFunction6D(x, y, z, w, u, v float64, seed uint32, f, disp []float64) {
-	xint := fastFloor(x)
-	yint := fastFloor(y)
-	zint := fastFloor(z)
-	wint := fastFloor(w)
-	uuint := fastFloor(u)
-	vint := fastFloor(v)
+	xint := FastFloor(x)
+	yint := FastFloor(y)
+	zint := FastFloor(z)
+	wint := FastFloor(w)
+	uuint := FastFloor(u)
+	vint := FastFloor(v)
 
 	for c := 0; c < 4; c++ {
 		f[c] = 99999.0
@@ -1927,12 +1909,12 @@ func CellularFunction6D(x, y, z, w, u, v float64, seed uint32, f, disp []float64
 							udist := upos - u
 							vdist := vpos - v
 							dist := (xdist*xdist + ydist*ydist + zdist*zdist + wdist*wdist + udist*udist + vdist*vdist)
-							xval := fastFloor(xpos)
-							yval := fastFloor(ypos)
-							zval := fastFloor(zpos)
-							wval := fastFloor(wpos)
-							uval := fastFloor(upos)
-							vval := fastFloor(vpos)
+							xval := FastFloor(xpos)
+							yval := FastFloor(ypos)
+							zval := FastFloor(zpos)
+							wval := FastFloor(wpos)
+							uval := FastFloor(upos)
+							vval := FastFloor(vpos)
 							dsp := valueNoise6(x, y, z, w, u, v, xval, yval, zval, wval, uval, vval, seed+6)
 							addDist(f, disp, dist, dsp)
 						}
@@ -1952,8 +1934,8 @@ const (
 
 func SimplexNoise2D(x, y float64, seed uint32, interp InterpFunc) float64 {
 	s := (x + y) * F2
-	i := fastFloor(x + s)
-	j := fastFloor(y + s)
+	i := FastFloor(x + s)
+	j := FastFloor(y + s)
 
 	t := float64(i + j) * G2
 	X0 := float64(i) - t
@@ -1992,7 +1974,7 @@ func SimplexNoise2D(x, y float64, seed uint32, interp InterpFunc) float64 {
 		n0 = 0
 	} else {
 		t0 *= t0
-		n0 = t0 * t0 * arrayDot(g0[:], x0, y0)
+		n0 = t0 * t0 * ArrayDot(g0[:], x0, y0)
 	}
 
 	t1 := 0.5 - x1*x1 - y1*y1
@@ -2000,7 +1982,7 @@ func SimplexNoise2D(x, y float64, seed uint32, interp InterpFunc) float64 {
 		n1 = 0
 	} else {
 		t1 *= t1
-		n1 = t1 * t1 * arrayDot(g1[:], x1, y1)
+		n1 = t1 * t1 * ArrayDot(g1[:], x1, y1)
 	}
 
 	t2 := 0.5 - x2*x2 - y2*y2
@@ -2008,7 +1990,7 @@ func SimplexNoise2D(x, y float64, seed uint32, interp InterpFunc) float64 {
 		n2 = 0
 	} else {
 		t2 *= t2
-		n2 = t2 * t2 * arrayDot(g2[:], x2, y2)
+		n2 = t2 * t2 * ArrayDot(g2[:], x2, y2)
 	}
 
 	// Add contributions together
@@ -2019,9 +2001,9 @@ func SimplexNoise3D(x, y, z float64, seed uint32, interp InterpFunc) float64 {
 	var n0, n1, n2, n3 float64
 
 	s := (x + y + z) * F3
-	i := fastFloor(x + s)
-	j := fastFloor(y + s)
-	k := fastFloor(z + s)
+	i := FastFloor(x + s)
+	j := FastFloor(y + s)
+	k := FastFloor(z + s)
 
 	t := float64(i + j + k) * G3
 	X0 := float64(i) - t
@@ -2110,7 +2092,7 @@ func SimplexNoise3D(x, y, z float64, seed uint32, interp InterpFunc) float64 {
 		n0 = 0.0
 	} else {
 		t0 *= t0
-		n0 = t0 * t0 * arrayDot(g0[:], x0, y0, z0)
+		n0 = t0 * t0 * ArrayDot(g0[:], x0, y0, z0)
 	}
 
 	t1 := 0.6 - x1*x1 - y1*y1 - z1*z1
@@ -2118,7 +2100,7 @@ func SimplexNoise3D(x, y, z float64, seed uint32, interp InterpFunc) float64 {
 		n1 = 0.0
 	} else {
 		t1 *= t1
-		n1 = t1 * t1 * arrayDot(g1[:], x1, y1, z1)
+		n1 = t1 * t1 * ArrayDot(g1[:], x1, y1, z1)
 	}
 
 	t2 := 0.6 - x2*x2 - y2*y2 - z2*z2
@@ -2126,7 +2108,7 @@ func SimplexNoise3D(x, y, z float64, seed uint32, interp InterpFunc) float64 {
 		n2 = 0.0
 	} else {
 		t2 *= t2
-		n2 = t2 * t2 * arrayDot(g2[:], x2, y2, z2)
+		n2 = t2 * t2 * ArrayDot(g2[:], x2, y2, z2)
 	}
 
 	t3 := 0.6 - x3*x3 - y3*y3 - z3*z3
@@ -2134,7 +2116,7 @@ func SimplexNoise3D(x, y, z float64, seed uint32, interp InterpFunc) float64 {
 		n3 = 0.0
 	} else {
 		t3 *= t3
-		n3 = t3 * t3 * arrayDot(g3[:], x3, y3, z3)
+		n3 = t3 * t3 * ArrayDot(g3[:], x3, y3, z3)
 	}
 
 	return (32.0*(n0+n1+n2+n3))*1.25086885 + 0.0003194984
@@ -2156,10 +2138,10 @@ func SimplexNoise4D(x, y, z, w float64, seed uint32, interp InterpFunc) float64 
 	var n0, n1, n2, n3, n4 float64 // Noise contributions from the five corners
 	// Skew the (x,y,z,w) space to determine which cell of 24 simplices we're in
 	s := (x + y + z + w) * F4 // Factor for 4D skewing
-	i := fastFloor(x + s)
-	j := fastFloor(y + s)
-	k := fastFloor(z + s)
-	l := fastFloor(w + s)
+	i := FastFloor(x + s)
+	j := FastFloor(y + s)
+	k := FastFloor(z + s)
+	l := FastFloor(w + s)
 	t := float64(i + j + k + l) * G4 // Factor for 4D unskewing
 	X0 := float64(i) - t               // Unskew the cell origin back to (x,y,z,w) space
 	Y0 := float64(j) - t
@@ -2242,7 +2224,7 @@ func SimplexNoise4D(x, y, z, w float64, seed uint32, interp InterpFunc) float64 
 		n0 = 0.0
 	} else {
 		t0 *= t0
-		n0 = t0 * t0 * arrayDot(g0[:], x0, y0, z0, w0)
+		n0 = t0 * t0 * ArrayDot(g0[:], x0, y0, z0, w0)
 	}
 
 	t1 := 0.6 - x1*x1 - y1*y1 - z1*z1 - w1*w1
@@ -2250,7 +2232,7 @@ func SimplexNoise4D(x, y, z, w float64, seed uint32, interp InterpFunc) float64 
 		n1 = 0.0
 	} else {
 		t1 *= t1
-		n1 = t1 * t1 * arrayDot(g1[:], x1, y1, z1, w1)
+		n1 = t1 * t1 * ArrayDot(g1[:], x1, y1, z1, w1)
 	}
 
 	t2 := 0.6 - x2*x2 - y2*y2 - z2*z2 - w2*w2
@@ -2258,7 +2240,7 @@ func SimplexNoise4D(x, y, z, w float64, seed uint32, interp InterpFunc) float64 
 		n2 = 0.0
 	} else {
 		t2 *= t2
-		n2 = t2 * t2 * arrayDot(g2[:], x2, y2, z2, w2)
+		n2 = t2 * t2 * ArrayDot(g2[:], x2, y2, z2, w2)
 	}
 
 	t3 := 0.6 - x3*x3 - y3*y3 - z3*z3 - w3*w3
@@ -2266,7 +2248,7 @@ func SimplexNoise4D(x, y, z, w float64, seed uint32, interp InterpFunc) float64 
 		n3 = 0.0
 	} else {
 		t3 *= t3
-		n3 = t3 * t3 * arrayDot(g3[:], x3, y3, z3, w3)
+		n3 = t3 * t3 * ArrayDot(g3[:], x3, y3, z3, w3)
 	}
 
 	t4 := 0.6 - x4*x4 - y4*y4 - z4*z4 - w4*w4
@@ -2274,7 +2256,7 @@ func SimplexNoise4D(x, y, z, w float64, seed uint32, interp InterpFunc) float64 
 		n4 = 0.0
 	} else {
 		t4 *= t4
-		n4 = t4 * t4 * arrayDot(g4[:], x4, y4, z4, w4)
+		n4 = t4 * t4 * ArrayDot(g4[:], x4, y4, z4, w4)
 	}
 	// Sum up and scale the result to cover the range [-1,1]
 	return 27.0 * (n0 + n1 + n2 + n3 + n4)
@@ -2343,8 +2325,8 @@ func NewSimplexNoise4D(x, y, z, w float64, seed uint32, interp InterpFunc) float
 	}
 	s *= F4
 
-	skewLoc := []int32{fastFloor(x + s), fastFloor(y + s), fastFloor(z + s), fastFloor(w + s)}
-	intLoc := []int32{fastFloor(x + s), fastFloor(y + s), fastFloor(z + s), fastFloor(w + s)}
+	skewLoc := []int32{FastFloor(x + s), FastFloor(y + s), FastFloor(z + s), FastFloor(w + s)}
+	intLoc := []int32{FastFloor(x + s), FastFloor(y + s), FastFloor(z + s), FastFloor(w + s)}
 	unskew := 0.
 	for c := 0; c < 4; c++ {
 		unskew += float64(skewLoc[c])
@@ -2419,8 +2401,8 @@ func SimplexNoise6D(x, y, z, w, u, v float64, seed uint32, interp InterpFunc) fl
 	}
 	s *= F4
 
-	skewLoc := []int32{fastFloor(x + s), fastFloor(y + s), fastFloor(z + s), fastFloor(w + s), fastFloor(u + s), fastFloor(v + s)}
-	intLoc := []int32{fastFloor(x + s), fastFloor(y + s), fastFloor(z + s), fastFloor(w + s), fastFloor(u + s), fastFloor(v + s)}
+	skewLoc := []int32{FastFloor(x + s), FastFloor(y + s), FastFloor(z + s), FastFloor(w + s), FastFloor(u + s), FastFloor(v + s)}
+	intLoc := []int32{FastFloor(x + s), FastFloor(y + s), FastFloor(z + s), FastFloor(w + s), FastFloor(u + s), FastFloor(v + s)}
 	unskew := 0.
 	for c := 0; c < 6; c++ {
 		unskew += float64(skewLoc[c])
