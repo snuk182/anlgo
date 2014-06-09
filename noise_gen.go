@@ -1314,6 +1314,11 @@ const (
 
 type InterpFunc func(float64) float64
 
+type NoiseFunc2 func(float64, float64, uint32, InterpFunc) float64
+type NoiseFunc3 func(float64, float64, float64, uint32, InterpFunc) float64
+type NoiseFunc4 func(float64, float64, float64, float64, uint32, InterpFunc) float64
+type NoiseFunc6 func(float64, float64, float64, float64, float64, float64, uint32, InterpFunc) float64
+
 func NoInterp(t float64) float64 {
 	return 0
 }
