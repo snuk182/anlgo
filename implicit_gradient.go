@@ -14,6 +14,8 @@ func (this *ImplicitGradient) Spacing() float64 {
 	return this.ImplicitModuleBase.spacing
 }
 
+func (this *ImplicitGradient) SetSeed(seed uint32){}
+
 func NewImplicitGradient() *ImplicitGradient {
 	v := new(ImplicitGradient)
 	v.SetGradient(0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0)
