@@ -21,6 +21,8 @@ func (this *ImplicitCache) Spacing() float64 {
 	return this.ImplicitModuleBase.spacing
 }
 
+func (this *ImplicitCache) SetSeed(seed uint32){}
+
 func (this *ImplicitCache) SetSourceModule(m ImplicitModule) {
 	this.source.SetModule(m)
 }

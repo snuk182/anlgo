@@ -15,6 +15,8 @@ func (this *ImplicitScaleOffset) Spacing() float64 {
 	return this.ImplicitModuleBase.spacing
 }
 
+func (this *ImplicitScaleOffset) SetSeed(seed uint32){}
+
 func (this *ImplicitScaleOffset) SetSourceModule(b ImplicitModule) {
 	this.source.SetModule(b)
 }

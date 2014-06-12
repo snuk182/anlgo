@@ -11,6 +11,8 @@ func (this *ImplicitScaleDomain) Spacing() float64 {
 	return this.ImplicitModuleBase.spacing
 }
 
+func (this *ImplicitScaleDomain) SetSeed(seed uint32){}
+
 func NewImplicitScaleDomainEmpty() *ImplicitScaleDomain {
 	return NewImplicitScaleDomain(1, 1, 1, 1, 1, 1)
 }

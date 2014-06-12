@@ -25,6 +25,8 @@ func (this *ImplicitAutoCorrect) Spacing() float64 {
 	return this.ImplicitModuleBase.spacing
 }
 
+func (this *ImplicitAutoCorrect) SetSeed(seed uint32){}
+
 func (this *ImplicitAutoCorrect) SetSource(m ImplicitModule) {
 	this.source = m
 	this.Calculate()

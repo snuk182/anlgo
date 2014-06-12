@@ -13,6 +13,8 @@ func (this *ImplicitBias) Spacing() float64 {
 	return this.ImplicitModuleBase.spacing
 }
 
+func (this *ImplicitBias) SetSeed(seed uint32){}
+
 func (this *ImplicitBias) SetSourceModule(b ImplicitModule) {
 	this.source.SetModule(b)
 }

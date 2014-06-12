@@ -22,6 +22,8 @@ func (this *ImplicitCombiner) Spacing() float64 {
 	return this.ImplicitModuleBase.spacing
 }
 
+func (this *ImplicitCombiner) SetSeed(seed uint32){}
+
 func NewImplicitCombiner(t CombinerType) *ImplicitCombiner {
 	v := &ImplicitCombiner{ctype: t}
 	v.ClearAllSources()

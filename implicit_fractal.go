@@ -20,7 +20,7 @@ type ImplicitFractal struct {
 	basis                                  [MaxSources]ImplicitBasisFunction
 	source                                 [MaxSources]ImplicitModule
 	exparray                               [MaxSources]float64
-	correct                                [MaxSources][2]float64
+	correct                                [MaxSources][2]float64 
 	offset, gain, H, frequency, lacunarity float64
 	numoctaves                             uint32
 	ftype                                  FractalType

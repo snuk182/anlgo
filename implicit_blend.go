@@ -11,6 +11,8 @@ func (this *ImplicitBlend) Spacing() float64 {
 	return this.ImplicitModuleBase.spacing
 }
 
+func (this *ImplicitBlend) SetSeed(seed uint32){}
+
 func (this *ImplicitBlend) SetLowSourceModule(b ImplicitModule) {
 	this.low.SetModule(b)
 }
