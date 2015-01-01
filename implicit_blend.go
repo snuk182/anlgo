@@ -9,9 +9,9 @@ type ImplicitBlend struct {
 
 func NewImplicitBlend() *ImplicitBlend {
 	return &ImplicitBlend{
-		low: 0,
-		high: 0,
-		control: 0,
+		low: NewScalarParameter(0),
+		high: NewScalarParameter(0),
+		control: NewScalarParameter(0),
 	}
 }
 

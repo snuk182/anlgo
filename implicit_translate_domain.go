@@ -7,13 +7,13 @@ type ImplicitTranslateDomain struct {
 
 func NewImplicitTranslateDomain() *ImplicitTranslateDomain {
 	return &ImplicitTranslateDomain{
-		source: 0,
-		ax: 0,
-		ay: 0,
-		az: 0,
-		aw: 0,
-		au: 0,
-		av: 0,
+		source: NewScalarParameter(0),
+		ax: NewScalarParameter(0),
+		ay: NewScalarParameter(0),
+		az: NewScalarParameter(0),
+		aw: NewScalarParameter(0),
+		au: NewScalarParameter(0),
+		av: NewScalarParameter(0),
 	}
 }
 

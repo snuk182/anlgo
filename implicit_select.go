@@ -9,11 +9,11 @@ type ImplicitSelect struct {
 
 func NewImplicitSelect() *ImplicitSelect {
 	return &ImplicitSelect{
-		low: 0,
-		high: 0,
-		control: 0,
-		threshhold: 0,
-		falloff: 0,
+		low: NewScalarParameter(0),
+		high: NewScalarParameter(0),
+		control: NewScalarParameter(0),
+		threshhold: NewScalarParameter(0),
+		falloff: NewScalarParameter(0),
 	}
 }
 
