@@ -12,7 +12,7 @@ func NewImplicitSelect() *ImplicitSelect {
 		low: NewScalarParameter(0),
 		high: NewScalarParameter(0),
 		control: NewScalarParameter(0),
-		threshhold: NewScalarParameter(0),
+		threshold: NewScalarParameter(0),
 		falloff: NewScalarParameter(0),
 	}
 }
