@@ -7,6 +7,16 @@ type ImplicitSelect struct {
 	low, high, control, threshold, falloff ScalarParameter
 }
 
+func NewImplicitSelect() *ImplicitSelect {
+	return &ImplicitSelect{
+		low: 0,
+		high: 0,
+		control: 0,
+		threshhold: 0,
+		falloff: 0,
+	}
+}
+
 func (this *ImplicitSelect) Spacing() float64 {
 	return this.ImplicitModuleBase.spacing
 }

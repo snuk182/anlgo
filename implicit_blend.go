@@ -7,6 +7,14 @@ type ImplicitBlend struct {
 	low, high, control ScalarParameter
 }
 
+func NewImplicitBlend() *ImplicitBlend {
+	return &ImplicitBlend{
+		low: 0,
+		high: 0,
+		control: 0,
+	}
+}
+
 func (this *ImplicitBlend) Spacing() float64 {
 	return this.ImplicitModuleBase.spacing
 }

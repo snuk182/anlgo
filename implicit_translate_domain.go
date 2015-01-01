@@ -5,6 +5,18 @@ type ImplicitTranslateDomain struct {
 	source, ax, ay, az, aw, au, av ScalarParameter
 }
 
+func NewImplicitTranslateDomain() *ImplicitTranslateDomain {
+	return &ImplicitTranslateDomain{
+		source: 0,
+		ax: 0,
+		ay: 0,
+		az: 0,
+		aw: 0,
+		au: 0,
+		av: 0,
+	}
+}
+
 func (this *ImplicitTranslateDomain) Spacing() float64 {
 	return this.ImplicitModuleBase.spacing
 }
