@@ -75,7 +75,7 @@ func (this *CellularGenerator) Get6D(x,y,z,w,u,v float64) CellularCache {
     return this.cache6;
 }
 
-func (this *CellularGenerator) setSeed(seed uint32) {
+func (this *CellularGenerator) SetSeed(seed uint32) {
     this.seed=seed;
     this.cache2.valid=false;
     this.cache3.valid=false;

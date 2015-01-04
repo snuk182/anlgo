@@ -65,3 +65,9 @@ func (this *ImplicitCellular) Get6D(x, y, z, w, u, v float64) float64 {
 	c := this.generator.Get6D(x, y, z, w, u, v)
 	return c.f[0]*this.coefficients[0] + c.f[1]*this.coefficients[1] + c.f[2]*this.coefficients[2] + c.f[3]*this.coefficients[3]
 }
+
+func (this *ImplicitCellular) SetSeed(seed uint32) {
+	if this.generator != nil {
+		this.generator.SetSeed(seed)
+	}
+}
