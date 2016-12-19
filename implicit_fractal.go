@@ -28,9 +28,9 @@ type ImplicitFractal struct {
 
 func (self *ImplicitFractal) SetNumOctaves(n uint32) {
 	if n >= MaxSources {
-		n = MaxSources - 1
-		self.numoctaves = n
+		n = MaxSources - 1		
 	}
+	self.numoctaves = n
 }
 
 func (self *ImplicitFractal) SetFrequency(f float64) {
